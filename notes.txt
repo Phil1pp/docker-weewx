@@ -1,16 +1,35 @@
-WEEWX_ROOT = /home/weewx
+docker version is in git/docker-weewx and is a lightly-modified version of
+https://github.com/tomdotorg/docker-weewx (his only goes up to 4.6.2 in github,
+but 4.8 in dockerhub.)
+ 
+NO usb support, so if we need that we should go here: https://github.com/felddy/weewx-docker/issues/16
+--net=host \
+  --device=/dev/ttyUSB0 \
+  --device=/dev/ttyAMA0 \
 
-SQLITE_ROOT = %(WEEWX_ROOT)s/archive
+weewx.conf is in data dir, because you can't change/rename mounted volume-files
+beause of inodes (docker limitation)
 
--v, --volume=[host-src:]container-dest[:<options>]
-
-docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -v /Users/tom/tmp/weewx/data:/var/lib/mysql -it --rm mysql
-mysql> grant all privileges on weewx.* to weewx@'%' identified by 'weewx';
-Query OK, 0 rows affected, 1 warning (0.01 sec)
-
-mysql> grant all privileges on weewx.* to weewx@localhost identified by 'weewx';
-Query OK, 0 rows affected, 2 warnings (0.00 sec)
+Keep in mind if you try to do ./setup.py install from ~/src of a built image,
+it will fail because of the above limitation (tries to rename user to user.bak,
+etc). From inspection of the setup process (which also does upgrades), it only
+renames/backs stuff up and doesn't make any changes to user, thus the
+wee_config --upgrade command should be sufficient (no idea how databases get
+upgraded, but it's not in setup.py
 
 
-CONF=dev HTTP_PORT=80 docker-compose up
+you will also need to upgrade after build/run if version in weewx.conf
+if the version in weewx.conf doesn't match version you are installing (from an
+already built system
+# /home/weewx/bin/wee_config --upgrade --dist-config /home/weewx/weewx.conf.4.8.0 /data/weewx.conf
 
+Install plugins
+# install plugins - NOTE, you need to do this after you build because user dir
+# is mounted only after build/run
+
+You may need to do this to upgrade:
+
+./shell.sh
+/usr/bin/sv -w 5 force-stop /etc/service/*
+ps -ef | grep weewxd  and kill
+cd /home/weewx/src

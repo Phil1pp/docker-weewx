@@ -1,3 +1,9 @@
+### Updates 8/2022:
+Updated to 4.8
+
+<b>PLEASE SEE [notes.txt](notes.txt)</b>. I moved from a local installation where my skins, configs,
+user scripts, etc, so I was able to copy these over to the dirs to be used by
+the docker install. YMMV.
 
 ### Basic usage:
 
