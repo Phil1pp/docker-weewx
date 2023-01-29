@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 HOME=/home/weewx
-CONF_FILE="/data/weewx.conf"
-echo "using $CONF_FILE"
+echo "using $CONF"
 
 # # TODO - check for existence of conf dir - exit(1) if not found
 
